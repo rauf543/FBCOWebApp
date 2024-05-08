@@ -9,8 +9,9 @@ const router = express.Router();
 // User registration route
 router.post('/register', async (req, res) => {
     try {
-        const { username, password, store_id } = req.body;
-
+        const { username, password, store_id, userRole } = req.body;
+        console.log(username)
+        console.log(userRole)
         // Check if the username already exists
         const existingUser = await User.findOne({ username });
         if (existingUser) {
@@ -25,6 +26,7 @@ router.post('/register', async (req, res) => {
             username,
             password: hashedPassword,
             store_id,
+            userRole
         });
 
         // Save the user to the database

@@ -14,6 +14,7 @@ const authenticateToken = (req, res, next) => {
         }
         req.userId = decoded.userId;
         req.store_id = decoded.store_id;
+        req.userRole = decoded.userRole
         next();
     });
 };

@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/users';
 
-const register = async (username, password, store_id) => {
+const register = async (username, password, store_id, userRole) => {
     try {
-        const response = await axios.post(`${API_URL}/register`, { username, password, store_id });
+        const response = await axios.post(`${API_URL}/register`, { username, password, store_id, userRole});
         return response.data;
     } catch (error) {
         throw error.response.data;

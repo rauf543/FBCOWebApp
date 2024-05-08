@@ -5,14 +5,15 @@ const Registration = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [store_id, setStoreId] = useState('');
+    const [userRole, setUserRole] = useState('')
     const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await register(username, password, store_id);
+            await register(username, password, store_id, userRole);
             // Redirect to the login page on successful registration
-            window.location.href = '/login';
+            window.location.href = '/';
         } catch (error) {
             setError(error.error);
         }
@@ -44,10 +45,19 @@ const Registration = () => {
                     onChange={(e) => setStoreId(e.target.value)}
                     required
                 />
+                <input
+                    type="text"
+                    placeholder="User Role"
+                    value={userRole}
+                    onChange={(e) => setUserRole(e.target.value)}
+                    required
+                />
                 <button type="submit">Register</button>
             </form>
         </div>
     );
 };
+
+
 
 export default Registration;
