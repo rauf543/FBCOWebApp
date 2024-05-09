@@ -6,17 +6,7 @@ import Login from './Auth/Login';
 import Registration from './Auth/Registration';
 import StockDashboard from './StockManagement/StockDashboard';
 import { logout } from '../services/authService';
-
-const PrivateRoute = () => {
-  const isAuthenticated = localStorage.getItem('token');
-  const userRole = localStorage.getItem('userRole');
-  console.log(localStorage)
-  return isAuthenticated && userRole === 'manager' ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/unauthorized" replace />
-  );
-};
+import PrivateRoute from './Auth/PrivateRoute'
 
 const App = () => {
   const isAuthenticated = localStorage.getItem('token');
@@ -59,7 +49,7 @@ const App = () => {
           <Route path="/" element={isAuthenticated ? <Navigate to="/stock-management" /> : <Login />} />
           <Route path="/register" element={isAuthenticated ? <Navigate to="/stock-management" /> : <Registration />} />
           <Route path="/unauthorized" element={<div>Unauthorized Access</div>} />
-          <Route path="/stock-management" element={<PrivateRoute />}>
+          <Route path="/stock-management" element={<PrivateRoute roles={['manager']} />}>
             <Route path="" element={<StockDashboard />} />
           </Route>
         </Routes>

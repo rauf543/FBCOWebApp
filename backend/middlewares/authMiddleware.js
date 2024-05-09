@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../config/auth');
 
 const authenticateToken = (req, res, next) => {
+    //console.log('hi')
     const token = req.headers['authorization'];
 
     if (!token) {
@@ -14,7 +15,8 @@ const authenticateToken = (req, res, next) => {
         }
         req.userId = decoded.userId;
         req.store_id = decoded.store_id;
-        req.userRole = decoded.userRole
+        req.userRole = decoded.userRole;
+        //console.log(req.userRole)
         next();
     });
 };

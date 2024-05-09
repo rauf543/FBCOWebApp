@@ -1,9 +1,11 @@
+//backend/routes
+
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { jwtSecret, jwtExpiration } = require('../config/auth');
-
+const authenticateToken = require('../middlewares/authMiddleware');
 const router = express.Router();
 
 // User registration route
@@ -26,7 +28,7 @@ router.post('/register', async (req, res) => {
             username,
             password: hashedPassword,
             store_id,
-            userRole
+            userRole,
         });
 
         // Save the user to the database
@@ -55,15 +57,25 @@ router.post('/login', async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
-
         // Generate JWT token
-        const token = jwt.sign({ userId: user._id, store_id: user.store_id }, jwtSecret, { expiresIn: jwtExpiration });
-
+        const token = jwt.sign({ userId: user._id, userRole: user.userRole }, jwtSecret, { expiresIn: jwtExpiration });
+        console.log(token)
         res.json({ token });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+// Define the verifyToken route
+router.get('/verifyToken', authenticateToken, (req, res) => {
+  // Assuming req.user is set by the authenticateToken middleware
+  // and contains the user's role
+  console.log('hi')
+  consloe.log(req)
+  res.json({ isValid: true, role: req.user.role });
+});
+
+// Export the router
 
 module.exports = router;
