@@ -6,7 +6,6 @@ import Login from './Auth/Login';
 import Registration from './Auth/Registration';
 import StockDashboard from './StockManagement/StockDashboard';
 import { logout } from '../services/authService';
-import PrivateRoute from './Auth/PrivateRoute'
 import { verifyToken } from '../services/authService';
 
 
