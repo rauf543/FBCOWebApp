@@ -59,7 +59,6 @@ router.post('/login', async (req, res) => {
         }
         // Generate JWT token
         const token = jwt.sign({ userId: user._id, userRole: user.userRole }, jwtSecret, { expiresIn: jwtExpiration });
-        console.log(token)
         res.json({ token });
     } catch (error) {
         console.error(error);
@@ -68,7 +67,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Define the verifyToken route
-router.get('/verifyToken', authenticateToken, (req, res) => {
+router.get('/verifyToken', authenticateToken, async (req, res) => {
   try {
     res.json({ isValid: true, user: req.user});
   } catch (error) {

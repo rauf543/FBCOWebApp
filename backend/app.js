@@ -15,7 +15,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/users', authRoutes);
-app.use('/api', stockManagementRoutes);
+app.use('/api/stock', stockManagementRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

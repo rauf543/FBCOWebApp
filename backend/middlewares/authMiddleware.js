@@ -21,7 +21,6 @@ const authenticateToken = async (req, res, next) => {
     const userInfo = { username, userRole, store_id };
 
     req.user = userInfo;
-    //console.log(req.user)
     next();
   } catch (err) {
     return res.status(403).json({ error: 'Invalid token' });
@@ -39,7 +38,8 @@ const authorizeManager = (req, res, next) => {
   if (req.user.userRole !== 'manager') {
     return res.status(403).json({ error: 'Access denied. Manager privileges required.' });
   }
-  console.log('succsess')
   next();
 };
-module.exports = { authenticateToken, authorizeAdmin, authorizeManager }
+exports.authenticateToken = authenticateToken;
+exports.authorizeAdmin = authorizeAdmin;
+exports.authorizeManager = authorizeManager;
