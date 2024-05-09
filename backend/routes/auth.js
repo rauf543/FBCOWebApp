@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { jwtSecret, jwtExpiration } = require('../config/auth');
-const authenticateToken = require('../middlewares/authMiddleware');
+const { authenticateToken, authorizeManager } = require('../middlewares/authMiddleware');
 const router = express.Router();
 
 // User registration route
@@ -69,13 +69,12 @@ router.post('/login', async (req, res) => {
 
 // Define the verifyToken route
 router.get('/verifyToken', authenticateToken, (req, res) => {
-  // Assuming req.user is set by the authenticateToken middleware
-  // and contains the user's role
-  console.log('hi')
-  consloe.log(req)
-  res.json({ isValid: true, role: req.user.role });
+  try {
+    res.json({ isValid: true, user: req.user});
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
-
 // Export the router
 
 module.exports = router;

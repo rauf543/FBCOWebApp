@@ -1,30 +1,44 @@
 ﻿// frontend/src/components/Auth/PrivateRoute.js
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { verifyToken } from '../../services/authService'; // Adjust the import path as needed
+import { verifyToken } from '../../services/authService';
 
-const PrivateRoute = ({ roles }) => {
-  const isAuthenticated = localStorage.getItem('token');
-  const userRole = localStorage.getItem('userRole');
-  console.log(userRole)
-  //console.log(roles)
-  // Check if user is not authenticated
-  const data = verifyToken()
-  console.log(data)
+const PrivateRoute = ({ allowedRoles }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const data = await verifyToken(token);
+          if (data.isValid) {
+            setIsAuthenticated(true);
+          }
+        }
+      } catch (error) {
+        console.error('Error verifying token:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkToken();
+  }, []);
+
+  if (isLoading) {
+    // Display a loading state while verifying the token
+    return <div>Loading...</div>;
+  }
+
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    // If user is not authenticated, redirect to the login page
+    return <Navigate to="/" replace />;
   }
 
-  // Check if the user's role matches any of the roles required for this route
-  if (roles && !roles.includes(userRole)) {
-    // If user's role is not authorized, redirect to an unauthorized page
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  // If authenticated and authorized, render the child components
+  // If authenticated, render the child components
   return <Outlet />;
-  
 };
 
 export default PrivateRoute;

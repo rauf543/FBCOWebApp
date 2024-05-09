@@ -28,16 +28,17 @@ const logout = () => {
 };
 
 // Function to verify token and get user role
-const verifyToken = async () => {
-    try {
-        const token = localStorage.getItem('token');
-        // Adjust the endpoint as necessary
-        const response = await axios.get(`${API_URL}/verifyToken`, {token});
-        return response.data; // Assuming the backend sends back { isValid: boolean, role: string }
-    } catch (error) {
-        console.error('Error verifying token:', error);
-        throw error;
-    }
+
+const verifyToken = async (token) => {
+  try {
+    const response = await axios.get(`${API_URL}/verifyToken`, {
+      headers: { Authorization: token },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error verifying token:', error);
+    throw error;
+  }
 };
 
 export { register, login, logout, verifyToken };

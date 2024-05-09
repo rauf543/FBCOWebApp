@@ -1,24 +1,45 @@
 const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../config/auth');
+const User = require('../models/user'); // Assuming you have a User model defined
 
-const authenticateToken = (req, res, next) => {
-    //console.log('hi')
-    const token = req.headers['authorization'];
+const authenticateToken = async (req, res, next) => {
+  const token = req.headers['authorization'];
 
-    if (!token) {
-        return res.status(401).json({ error: 'No token provided' });
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, jwtSecret);
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    jwt.verify(token, jwtSecret, (err, decoded) => {
-        if (err) {
-            return res.status(403).json({ error: 'Invalid token' });
-        }
-        req.userId = decoded.userId;
-        req.store_id = decoded.store_id;
-        req.userRole = decoded.userRole;
-        //console.log(req.userRole)
-        next();
-    });
+    const { username, userRole, store_id } = user;
+    const userInfo = { username, userRole, store_id };
+
+    req.user = userInfo;
+    //console.log(req.user)
+    next();
+  } catch (err) {
+    return res.status(403).json({ error: 'Invalid token' });
+  }
 };
 
-module.exports = authenticateToken;
+const authorizeAdmin = (req, res, next) => {
+  if (req.user.userRole !== 'admin') {
+    return res.status(403).json({ error: 'Access denied. Admin privileges required.' });
+  }
+  next();
+};
+
+const authorizeManager = (req, res, next) => {
+  if (req.user.userRole !== 'manager') {
+    return res.status(403).json({ error: 'Access denied. Manager privileges required.' });
+  }
+  console.log('succsess')
+  next();
+};
+module.exports = { authenticateToken, authorizeAdmin, authorizeManager }
